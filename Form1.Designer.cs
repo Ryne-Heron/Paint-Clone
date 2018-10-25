@@ -74,10 +74,10 @@
             this.textBox27 = new System.Windows.Forms.TextBox();
             this.textBox28 = new System.Windows.Forms.TextBox();
             this.textBox1 = new System.Windows.Forms.TextBox();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.drawPanel = new System.Windows.Forms.PictureBox();
             this.menuStrip1.SuspendLayout();
             this.menuBar.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.drawPanel)).BeginInit();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -211,6 +211,7 @@
             this.penComboBox.Name = "penComboBox";
             this.penComboBox.Size = new System.Drawing.Size(114, 21);
             this.penComboBox.TabIndex = 34;
+            this.penComboBox.SelectedIndexChanged += new System.EventHandler(this.penComboBox_SelectedIndexChanged);
             // 
             // pencilComboBox
             // 
@@ -222,6 +223,7 @@
             this.pencilComboBox.Size = new System.Drawing.Size(114, 21);
             this.pencilComboBox.TabIndex = 33;
             this.pencilComboBox.SelectedIndexChanged += new System.EventHandler(this.pencilComboBox_SelectedIndexChanged);
+            this.pencilComboBox.SelectionChangeCommitted += new System.EventHandler(this.pencilComboBox_SelectedIndexChanged);
             // 
             // drawLineButton
             // 
@@ -247,8 +249,9 @@
             this.penButton.Name = "penButton";
             this.penButton.Size = new System.Drawing.Size(114, 55);
             this.penButton.TabIndex = 3;
-            this.penButton.Text = "Pen";
+            this.penButton.Text = "Paint Brush";
             this.penButton.UseVisualStyleBackColor = true;
+            this.penButton.Click += new System.EventHandler(this.penButton_Click);
             // 
             // pencilButton
             // 
@@ -522,14 +525,18 @@
             this.textBox1.TabIndex = 2;
             this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             // 
-            // pictureBox1
+            // drawPanel
             // 
-            this.pictureBox1.BackColor = System.Drawing.Color.White;
-            this.pictureBox1.Location = new System.Drawing.Point(12, 150);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(1393, 599);
-            this.pictureBox1.TabIndex = 2;
-            this.pictureBox1.TabStop = false;
+            this.drawPanel.BackColor = System.Drawing.Color.White;
+            this.drawPanel.Cursor = System.Windows.Forms.Cursors.Default;
+            this.drawPanel.Location = new System.Drawing.Point(12, 150);
+            this.drawPanel.Name = "drawPanel";
+            this.drawPanel.Size = new System.Drawing.Size(1393, 599);
+            this.drawPanel.TabIndex = 2;
+            this.drawPanel.TabStop = false;
+            this.drawPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.drawPanel_MouseDown);
+            this.drawPanel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.drawPanel_MouseMove);
+            this.drawPanel.MouseUp += new System.Windows.Forms.MouseEventHandler(this.drawPanel_MouseUp);
             // 
             // Form1
             // 
@@ -537,7 +544,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ScrollBar;
             this.ClientSize = new System.Drawing.Size(1417, 761);
-            this.Controls.Add(this.pictureBox1);
+            this.Controls.Add(this.drawPanel);
             this.Controls.Add(this.menuBar);
             this.Controls.Add(this.menuStrip1);
             this.ForeColor = System.Drawing.SystemColors.ControlDarkDark;
@@ -549,7 +556,7 @@
             this.menuStrip1.PerformLayout();
             this.menuBar.ResumeLayout(false);
             this.menuBar.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.drawPanel)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -603,7 +610,7 @@
         private System.Windows.Forms.ComboBox eraserComboBox;
         private System.Windows.Forms.ToolStripMenuItem undoToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem redoToolStripMenuItem;
-        private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.PictureBox drawPanel;
     }
 }
 
