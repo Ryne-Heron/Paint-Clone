@@ -20,6 +20,8 @@ namespace Assignment4
         int? initY = null;
         int width;
         Color chosenColor = Color.Black;
+        int lastPencilWidth = 1; //saves the most recent pencil width
+        int lastBrushWidth = 5; //saves the most recent brush width
 
         public Form1()
         {
@@ -36,6 +38,8 @@ namespace Assignment4
             pencilComboBox.DataSource = pencilList;
             penComboBox.DataSource = penList;
             eraserComboBox.DataSource = eraserList;
+
+            width = 1; //pencil of width 1 is the default
 
             //All this just to make the cursor disappear
             textBox1.GotFocus += Color_GotFocus;
@@ -96,16 +100,6 @@ namespace Assignment4
             initY = null;
         }
 
-        private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
-        {
-
-        }
-
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
         private void colorDialogButton_Click(object sender, EventArgs e)
         {
             ColorDialog MyDialog = new ColorDialog();
@@ -116,7 +110,12 @@ namespace Assignment4
 
         private void button1_Click(object sender, EventArgs e)
         {
-            width = 1;
+            width = lastPencilWidth;
+        }
+
+        private void penButton_Click(object sender, EventArgs e)
+        {
+            width = lastBrushWidth;
         }
 
         private void pencilComboBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -124,17 +123,20 @@ namespace Assignment4
             if ((string)pencilComboBox.SelectedItem == "size 1")
             {
                 width = 1;
+                lastPencilWidth = 1;
             }
 
             if((string)pencilComboBox.SelectedItem == "size 2")
             {
                 width = 2;
+                lastPencilWidth = 2;
             }
 
-            if((string)pencilComboBox.SelectedItem == "size 3")
+            if ((string)pencilComboBox.SelectedItem == "size 3")
             {
                 width = 3;
-            } 
+                lastPencilWidth = 3;
+            }
 
         }
 
@@ -143,21 +145,25 @@ namespace Assignment4
             if ((string)penComboBox.SelectedItem == "size 5")
             {
                 width = 5;
+                lastBrushWidth = 5;
             }
 
             if ((string)penComboBox.SelectedItem == "size 6")
             {
                 width = 6;
+                lastBrushWidth = 6;
             }
 
             if ((string)penComboBox.SelectedItem == "size 7")
             {
                 width = 7;
+                lastBrushWidth = 7;
             }
 
             if ((string)penComboBox.SelectedItem == "size 8")
             {
                 width = 8;
+                lastBrushWidth = 8;
             }
 
         }
@@ -170,12 +176,6 @@ namespace Assignment4
                 Chosen_Color_Display.BackColor = chosenColor;
             }
         }
-
-        private void penButton_Click(object sender, EventArgs e)
-        {
-            width = 5;
-        }
-
 
 
         [DllImport("user32.dll")]
