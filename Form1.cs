@@ -23,7 +23,7 @@ namespace Assignment4
         Color chosenColor = Color.Black;
         int lastPencilWidth = 1; //saves the most recent pencil width
         int lastBrushWidth = 5; //saves the most recent brush width
-        String currentFile;
+        String currentFile = "";
 
         public Form1()
         {
