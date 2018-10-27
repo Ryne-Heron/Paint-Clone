@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Drawing;
+using System.Drawing.Imaging;
 
 namespace Assignment4
 {
@@ -22,6 +23,7 @@ namespace Assignment4
         Color chosenColor = Color.Black;
         int lastPencilWidth = 1; //saves the most recent pencil width
         int lastBrushWidth = 5; //saves the most recent brush width
+        String currentFile;
 
         public Form1()
         {
@@ -79,6 +81,7 @@ namespace Assignment4
             if (startDraw)
             {
                 Pen p = new Pen(chosenColor, width);
+                p.SetLineCap(System.Drawing.Drawing2D.LineCap.Round, System.Drawing.Drawing2D.LineCap.Round, System.Drawing.Drawing2D.DashCap.Round);
                 g.DrawLine(p, new Point(initX ?? e.X, initY ?? e.Y), new Point(e.X, e.Y));
                 initX = e.X;
                 initY = e.Y;
@@ -87,7 +90,6 @@ namespace Assignment4
 
         private void drawPanel_MouseDown(object sender, MouseEventArgs e)
         {
-            
             startDraw = true;
             initX = e.X;
             initY = e.Y;
@@ -100,12 +102,20 @@ namespace Assignment4
             initY = null;
         }
 
+        private void drawPanel_Resize(object sender, EventArgs e)
+        {
+            drawPanel.Invalidate();
+        }
+
         private void colorDialogButton_Click(object sender, EventArgs e)
         {
             ColorDialog MyDialog = new ColorDialog();
             MyDialog.ShowDialog();
             MyDialog.AllowFullOpen = true;
             MyDialog.FullOpen = true;
+
+            chosenColor = MyDialog.Color;
+            Chosen_Color_Display.BackColor = chosenColor;
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -175,6 +185,40 @@ namespace Assignment4
                 chosenColor = ((TextBox)sender).BackColor;
                 Chosen_Color_Display.BackColor = chosenColor;
             }
+        }
+
+        private void saveImage_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog dialog = new SaveFileDialog();
+            dialog.AddExtension = true;
+            dialog.Filter = "Png (*.png)|*.png";
+            if (currentFile == "" || ((ToolStripMenuItem)(sender)).Text == "Save As")
+            {
+                dialog.ShowDialog();
+                int width = Convert.ToInt32(drawPanel.Width);
+                int height = Convert.ToInt32(drawPanel.Height);
+                Bitmap bmp = new Bitmap(width, height);
+                drawPanel.DrawToBitmap(bmp, new Rectangle(0, 0, width, height));
+                if (dialog.FileName != "")
+                {
+                    bmp.Save(dialog.FileName, ImageFormat.Png);
+                    currentFile = dialog.FileName;
+                }
+            }
+            else
+            {
+                int width = Convert.ToInt32(drawPanel.Width);
+                int height = Convert.ToInt32(drawPanel.Height);
+                Bitmap bmp = new Bitmap(width, height);
+                drawPanel.DrawToBitmap(bmp, new Rectangle(0, 0, width, height));
+                bmp.Save(currentFile, ImageFormat.Png);
+            }
+        }
+
+        private void newImage_Click(object sender, EventArgs e) //make sure to check if there is anything drawn, prompt the user to save
+        {
+            drawPanel.Refresh();
+            currentFile = "";
         }
 
 

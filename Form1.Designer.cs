@@ -38,6 +38,7 @@
             this.undoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.redoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuBar = new System.Windows.Forms.GroupBox();
+            this.Chosen_Color_Display = new System.Windows.Forms.TextBox();
             this.eraserComboBox = new System.Windows.Forms.ComboBox();
             this.penComboBox = new System.Windows.Forms.ComboBox();
             this.pencilComboBox = new System.Windows.Forms.ComboBox();
@@ -75,7 +76,6 @@
             this.textBox28 = new System.Windows.Forms.TextBox();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.drawPanel = new System.Windows.Forms.PictureBox();
-            this.Chosen_Color_Display = new System.Windows.Forms.TextBox();
             this.menuStrip1.SuspendLayout();
             this.menuBar.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.drawPanel)).BeginInit();
@@ -108,8 +108,9 @@
             // newToolStripMenuItem
             // 
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.newToolStripMenuItem.Text = "New";
+            this.newToolStripMenuItem.Click += new System.EventHandler(this.newImage_Click);
             // 
             // openToolStripMenuItem
             // 
@@ -120,14 +121,16 @@
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.saveToolStripMenuItem.Text = "Save";
+            this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveImage_Click);
             // 
             // saveAsToolStripMenuItem
             // 
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.saveAsToolStripMenuItem.Text = "Save As";
+            this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.saveImage_Click);
             // 
             // recentlyOpenedToolStripMenuItem
             // 
@@ -194,6 +197,15 @@
             this.menuBar.TabIndex = 1;
             this.menuBar.TabStop = false;
             this.menuBar.Text = "Menu";
+            // 
+            // Chosen_Color_Display
+            // 
+            this.Chosen_Color_Display.Cursor = System.Windows.Forms.Cursors.Default;
+            this.Chosen_Color_Display.Location = new System.Drawing.Point(136, 91);
+            this.Chosen_Color_Display.Name = "Chosen_Color_Display";
+            this.Chosen_Color_Display.ReadOnly = true;
+            this.Chosen_Color_Display.Size = new System.Drawing.Size(304, 20);
+            this.Chosen_Color_Display.TabIndex = 36;
             // 
             // eraserComboBox
             // 
@@ -622,15 +634,7 @@
             this.drawPanel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.drawPanel_MouseDown);
             this.drawPanel.MouseMove += new System.Windows.Forms.MouseEventHandler(this.drawPanel_MouseMove);
             this.drawPanel.MouseUp += new System.Windows.Forms.MouseEventHandler(this.drawPanel_MouseUp);
-            // 
-            // Chosen_Color_Display
-            // 
-            this.Chosen_Color_Display.Cursor = System.Windows.Forms.Cursors.Default;
-            this.Chosen_Color_Display.Location = new System.Drawing.Point(136, 91);
-            this.Chosen_Color_Display.Name = "Chosen_Color_Display";
-            this.Chosen_Color_Display.ReadOnly = true;
-            this.Chosen_Color_Display.Size = new System.Drawing.Size(304, 20);
-            this.Chosen_Color_Display.TabIndex = 36;
+            this.drawPanel.Resize += new System.EventHandler(this.drawPanel_Resize);
             // 
             // Form1
             // 
