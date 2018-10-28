@@ -17,6 +17,7 @@ namespace Assignment4
     {
         Graphics g;
         bool startDraw = false;
+        bool somethingDrawn = false;
         int? initX = null;
         int? initY = null;
         int width;
@@ -30,6 +31,17 @@ namespace Assignment4
             InitializeComponent();
             g = drawPanel.CreateGraphics();
             Chosen_Color_Display.BackColor = chosenColor;
+        }
+
+        public string CurrentFile
+        {
+            get => currentFile;
+            set { currentFile = value; }
+        }
+        public PictureBox DrawPanel
+        {
+            get => drawPanel;
+            set { drawPanel = value; }
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -100,6 +112,7 @@ namespace Assignment4
             startDraw = false;
             initX = null;
             initY = null;
+            somethingDrawn = true;
         }
 
         private void drawPanel_Resize(object sender, EventArgs e)
@@ -217,8 +230,43 @@ namespace Assignment4
 
         private void newImage_Click(object sender, EventArgs e) //make sure to check if there is anything drawn, prompt the user to save
         {
-            drawPanel.Refresh();
-            currentFile = "";
+            if (somethingDrawn == true)
+            {
+                Form f2 = new Form2(this);
+                f2.Show();
+
+                /*SaveFileDialog dialog = new SaveFileDialog();
+                dialog.AddExtension = true;
+                dialog.Filter = "Png (*.png)|*.png";
+                if (currentFile == "" || ((ToolStripMenuItem)(sender)).Text == "Save As")
+                {
+                    dialog.ShowDialog();
+                    int width = Convert.ToInt32(drawPanel.Width);
+                    int height = Convert.ToInt32(drawPanel.Height);
+                    Bitmap bmp = new Bitmap(width, height);
+                    drawPanel.DrawToBitmap(bmp, new Rectangle(0, 0, width, height));
+                    if (dialog.FileName != "")
+                    {
+                        bmp.Save(dialog.FileName, ImageFormat.Png);
+                        currentFile = dialog.FileName;
+                    }
+                }
+                else
+                {
+                    int width = Convert.ToInt32(drawPanel.Width);
+                    int height = Convert.ToInt32(drawPanel.Height);
+                    Bitmap bmp = new Bitmap(width, height);
+                    drawPanel.DrawToBitmap(bmp, new Rectangle(0, 0, width, height));
+                    bmp.Save(currentFile, ImageFormat.Png);
+                } */
+                somethingDrawn = false;
+                //drawPanel.Refresh();
+            }
+            else
+            {
+                drawPanel.Refresh();
+                currentFile = "";
+            }
         }
 
 
