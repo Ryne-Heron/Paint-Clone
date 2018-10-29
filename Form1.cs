@@ -25,10 +25,12 @@ namespace Assignment4
         int lastPencilWidth = 1; //saves the most recent pencil width
         int lastBrushWidth = 5; //saves the most recent brush width
         String currentFile = "";
+        Bitmap bmp = null;
 
         public Form1()
         {
             InitializeComponent();
+            bmp = new Bitmap(drawPanel.ClientSize.Width, drawPanel.ClientSize.Height);
             g = drawPanel.CreateGraphics();
             Chosen_Color_Display.BackColor = chosenColor;
         }
@@ -149,7 +151,7 @@ namespace Assignment4
                 lastPencilWidth = 1;
             }
 
-            if((string)pencilComboBox.SelectedItem == "size 2")
+            if ((string)pencilComboBox.SelectedItem == "size 2")
             {
                 width = 2;
                 lastPencilWidth = 2;
@@ -193,7 +195,7 @@ namespace Assignment4
 
         private void colorSelect_Click(object sender, EventArgs e)
         {
-            if(sender as TextBox != null)
+            if (sender as TextBox != null)
             {
                 chosenColor = ((TextBox)sender).BackColor;
                 Chosen_Color_Display.BackColor = chosenColor;
@@ -230,38 +232,14 @@ namespace Assignment4
 
         private void newImage_Click(object sender, EventArgs e) //make sure to check if there is anything drawn, prompt the user to save
         {
+            Bitmap bmp2 = null;
             if (somethingDrawn == true)
             {
-                Form f2 = new Form2(this);
-                f2.Show();
-
-                /*SaveFileDialog dialog = new SaveFileDialog();
-                dialog.AddExtension = true;
-                dialog.Filter = "Png (*.png)|*.png";
-                if (currentFile == "" || ((ToolStripMenuItem)(sender)).Text == "Save As")
-                {
-                    dialog.ShowDialog();
-                    int width = Convert.ToInt32(drawPanel.Width);
-                    int height = Convert.ToInt32(drawPanel.Height);
-                    Bitmap bmp = new Bitmap(width, height);
-                    drawPanel.DrawToBitmap(bmp, new Rectangle(0, 0, width, height));
-                    if (dialog.FileName != "")
-                    {
-                        bmp.Save(dialog.FileName, ImageFormat.Png);
-                        currentFile = dialog.FileName;
-                    }
-                }
-                else
-                {
-                    int width = Convert.ToInt32(drawPanel.Width);
-                    int height = Convert.ToInt32(drawPanel.Height);
-                    Bitmap bmp = new Bitmap(width, height);
-                    drawPanel.DrawToBitmap(bmp, new Rectangle(0, 0, width, height));
-                    bmp.Save(currentFile, ImageFormat.Png);
-                } */
+                 Form f2 = new Form2(this);
+                 f2.Show();
                 somethingDrawn = false;
-                //drawPanel.Refresh();
             }
+
             else
             {
                 drawPanel.Refresh();
@@ -280,5 +258,61 @@ namespace Assignment4
                 HideCaret(((TextBox)sender).Handle);
             }
         }
+
+        private void openToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                OpenFileDialog open = new OpenFileDialog();
+                //open.Filter = "Image Files(*.jpg; *.jpeg; *.gif; *.bmp)|*.jpg; *.jpeg; *.gif; *.bmp";
+                if (open.ShowDialog() == DialogResult.OK)
+                {
+                    Bitmap bit = new Bitmap(open.FileName);
+                    drawPanel.Image = bit;
+                }
+            }
+            catch (Exception)
+            {
+                throw new ApplicationException("Failed loading image");
+            }
+
+        }
+
+        private void saveToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            //just a bunch of dumb ideas i had to try fixing save 
+            /*Bitmap bm2 = null;
+
+            SaveFileDialog dialog = new SaveFileDialog();
+            dialog.AddExtension = true;
+            dialog.Filter = "Png (*.png)|*.png";
+            if (currentFile == "" || ((ToolStripMenuItem)(sender)).Text == "Save As")
+            {
+                dialog.ShowDialog();
+                using (var bm = new Bitmap(drawPanel.Width, drawPanel.Height))
+                {
+                    drawPanel.DrawToBitmap(bm, new Rectangle(0, 0, bm.Width, bm.Height));
+                    bm2 = new Bitmap(bm);
+                    bm.Dispose();
+                }
+                if (dialog.FileName != "")
+                {
+                    bm2.Save(dialog.FileName, ImageFormat.Png);
+                    currentFile = dialog.FileName;
+                    bm2.Dispose();
+                } */
+
+            // SaveFileDialog dialog = new SaveFileDialog();
+
+            // Bitmap bmp = new Bitmap(drawPanel.ClientRectangle.Width, drawPanel.ClientRectangle.Height);
+            //drawPanel.DrawToBitmap(bmp, new Rectangle(0, 0, bmp.Width, bmp.Height));
+            // bmp.Save(dialog.FileName);
+            //  string FilePath = Application.StartupPath;
+            // drawPanel.Image.Save(FilePath, ImageFormat.Png);
+            //Image image = drawPanel.Image;
+           // image.Save(@"C:\Documents and Settings\100000test.jpg", ImageFormat.Jpeg);
+        }
+        }
     }
-}
+
+

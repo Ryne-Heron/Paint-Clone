@@ -51,7 +51,7 @@ namespace Assignment4
                 this.CallingForm.DrawPanel.DrawToBitmap(bmp, new Rectangle(0, 0, width, height));
                 if (dialog.FileName != "")
                 {
-                    bmp.Save(dialog.FileName, ImageFormat.Png);
+                    bmp.Save(dialog.FileName, System.Drawing.Imaging.ImageFormat.Jpeg);
                     this.CallingForm.CurrentFile = dialog.FileName;
                 }
             }
@@ -61,7 +61,7 @@ namespace Assignment4
                 int height = Convert.ToInt32(this.CallingForm.DrawPanel.Height);
                 Bitmap bmp = new Bitmap(width, height);
                 this.CallingForm.DrawPanel.DrawToBitmap(bmp, new Rectangle(0, 0, width, height));
-                bmp.Save(this.CallingForm.CurrentFile, ImageFormat.Png);
+                bmp.Save(dialog.FileName, System.Drawing.Imaging.ImageFormat.Jpeg);
             }
             this.CallingForm.DrawPanel.Refresh();
             this.Close();
