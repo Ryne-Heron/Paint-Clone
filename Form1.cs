@@ -20,6 +20,8 @@ namespace Assignment4
         bool somethingDrawn = false;
         int? initX = null;
         int? initY = null;
+        int finalX = 0;
+        int finalY = 0;
         int width;
         Color chosenColor = Color.Black;
         int lastPencilWidth = 1; //saves the most recent pencil width
@@ -28,6 +30,10 @@ namespace Assignment4
         Bitmap bmp = null;
         Stack<Bitmap> undoStack;
         Stack<Bitmap> redoStack;
+        bool drawLineSet = false;
+        bool eraserSet = false;
+        Color bkg;
+       
 
         public Form1()
         {
@@ -35,9 +41,17 @@ namespace Assignment4
             bmp = new Bitmap(drawPanel.ClientSize.Width, drawPanel.ClientSize.Height);
             g = drawPanel.CreateGraphics();
             Chosen_Color_Display.BackColor = chosenColor;
+            bkg = drawPanel.BackColor;
+
+            Bitmap temp = new Bitmap(drawPanel.ClientSize.Width, drawPanel.ClientSize.Height);
+            Graphics f = Graphics.FromImage(temp);
+            drawPanel.Image = temp;
+            Bitmap temp2 = new Bitmap(drawPanel.Image);
+            //undoStack.Push(temp);
 
             undoStack = new Stack<Bitmap>();
             redoStack = new Stack<Bitmap>();
+            undoStack.Push(temp2);
         }
 
         public string CurrentFile
@@ -97,13 +111,27 @@ namespace Assignment4
 
         private void drawPanel_MouseMove(object sender, MouseEventArgs e)
         {
-            if (startDraw)
+            if (drawLineSet == false)
             {
-                Pen p = new Pen(chosenColor, width);
-                p.SetLineCap(System.Drawing.Drawing2D.LineCap.Round, System.Drawing.Drawing2D.LineCap.Round, System.Drawing.Drawing2D.DashCap.Round);
-                g.DrawLine(p, new Point(initX ?? e.X, initY ?? e.Y), new Point(e.X, e.Y));
-                initX = e.X;
-                initY = e.Y;
+                if (startDraw)
+                {
+                    if (eraserSet == true)
+                    {
+                        Pen p = new Pen(bkg, width);
+                        p.SetLineCap(System.Drawing.Drawing2D.LineCap.Round, System.Drawing.Drawing2D.LineCap.Round, System.Drawing.Drawing2D.DashCap.Round);
+                        g.DrawLine(p, new Point(initX ?? e.X, initY ?? e.Y), new Point(e.X, e.Y));
+                        initX = e.X;
+                        initY = e.Y;
+                    }
+                    else
+                    {
+                        Pen p = new Pen(chosenColor, width);
+                        p.SetLineCap(System.Drawing.Drawing2D.LineCap.Round, System.Drawing.Drawing2D.LineCap.Round, System.Drawing.Drawing2D.DashCap.Round);
+                        g.DrawLine(p, new Point(initX ?? e.X, initY ?? e.Y), new Point(e.X, e.Y));
+                        initX = e.X;
+                        initY = e.Y;
+                    }
+                }
             }
         }
 
@@ -118,10 +146,24 @@ namespace Assignment4
         {
 
             startDraw = false;
-            initX = null;
-            initY = null;
-            undoStack.Push();
+            //initX = null;
+            // initY = null;
+            finalX = e.X;
+            finalY = e.Y;
+            //undoStack.Push();
             somethingDrawn = true;
+            Bitmap temp = new Bitmap(drawPanel.ClientSize.Width, drawPanel.ClientSize.Height);
+            Graphics f = Graphics.FromImage(temp);
+           // drawPanel.Image = temp;
+            Bitmap temp2 = new Bitmap(drawPanel.Image);
+            undoStack.Push(temp2);
+
+            if (drawLineSet == true)
+            {
+                Pen p = new Pen(chosenColor, width);
+                p.SetLineCap(System.Drawing.Drawing2D.LineCap.Round, System.Drawing.Drawing2D.LineCap.Round, System.Drawing.Drawing2D.DashCap.Round);
+                g.DrawLine(p, (float)initX, (float)initY, (float)finalX, (float)finalY);
+            }
         }
 
         private void undoButton_Click(object sender, EventArgs e)
@@ -164,11 +206,16 @@ namespace Assignment4
         private void pencilButton_Click(object sender, EventArgs e)
         {
             width = lastPencilWidth;
+            drawLineSet = false;
+            eraserSet = false;
+            
         }
 
         private void brushButton_Click(object sender, EventArgs e)
         {
             width = lastBrushWidth;
+            drawLineSet = false;
+            eraserSet = false;
         }
 
         private void pencilComboBox_SelectedIndexChanged(object sender, EventArgs e)
@@ -337,7 +384,42 @@ namespace Assignment4
             //Image image = drawPanel.Image;
            // image.Save(@"C:\Documents and Settings\100000test.jpg", ImageFormat.Jpeg);
         }
+
+        private void drawLineButton_Click(object sender, EventArgs e)
+        {
+           // Pen p = new Pen(chosenColor, width);
+           // g.DrawLine(p, (float)initX, (float)initY, (float)finalX, (float)finalY);
+            drawLineSet = true;
+
         }
+
+        private void eraserButton_Click(object sender, EventArgs e)
+        {
+            eraserSet = true;
+            width = 3;
+        }
+
+        private void eraserComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if ((string)eraserComboBox.SelectedItem == "size 1")
+            {
+                width = 3;
+                
+            }
+
+            if ((string)eraserComboBox.SelectedItem == "size 2")
+            {
+                width = 4;
+               
+            }
+
+            if ((string)eraserComboBox.SelectedItem == "size 3")
+            {
+                width = 5;
+                
+            }
+        }
+    }
     }
 
 
