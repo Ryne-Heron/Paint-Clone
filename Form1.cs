@@ -26,6 +26,8 @@ namespace Assignment4
         int lastBrushWidth = 5; //saves the most recent brush width
         String currentFile = "";
         Bitmap bmp = null;
+        Stack<Bitmap> undoStack;
+        Stack<Bitmap> redoStack;
 
         public Form1()
         {
@@ -33,6 +35,9 @@ namespace Assignment4
             bmp = new Bitmap(drawPanel.ClientSize.Width, drawPanel.ClientSize.Height);
             g = drawPanel.CreateGraphics();
             Chosen_Color_Display.BackColor = chosenColor;
+
+            undoStack = new Stack<Bitmap>();
+            redoStack = new Stack<Bitmap>();
         }
 
         public string CurrentFile
@@ -111,10 +116,33 @@ namespace Assignment4
 
         private void drawPanel_MouseUp(object sender, MouseEventArgs e)
         {
+
             startDraw = false;
             initX = null;
             initY = null;
+            undoStack.Push();
             somethingDrawn = true;
+        }
+
+        private void undoButton_Click(object sender, EventArgs e)
+        {
+            if(undoStack.Count > 0)
+            {
+                Bitmap tempBmp = undoStack.Pop();
+                g.DrawImage(tempBmp, 0, 0, drawPanel.ClientSize.Width, drawPanel.ClientSize.Height);
+                redoStack.Push(tempBmp);
+            }
+        }
+
+        private void redoButton_Click(object sender, EventArgs e)
+        {
+            if(redoStack.Count > 0)
+            {
+                Bitmap tempBmp = redoStack.Pop();
+                g.DrawImage(tempBmp, 0, 0, drawPanel.ClientSize.Width, drawPanel.ClientSize.Height);
+                undoStack.Push(tempBmp);
+                drawPanel.Refresh();
+            }
         }
 
         private void drawPanel_Resize(object sender, EventArgs e)
@@ -133,12 +161,12 @@ namespace Assignment4
             Chosen_Color_Display.BackColor = chosenColor;
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void pencilButton_Click(object sender, EventArgs e)
         {
             width = lastPencilWidth;
         }
 
-        private void penButton_Click(object sender, EventArgs e)
+        private void brushButton_Click(object sender, EventArgs e)
         {
             width = lastBrushWidth;
         }
@@ -207,13 +235,14 @@ namespace Assignment4
             SaveFileDialog dialog = new SaveFileDialog();
             dialog.AddExtension = true;
             dialog.Filter = "Png (*.png)|*.png";
+
+            var bitMapGraphics = Graphics.FromImage(bmp);
+            var rect = drawPanel.RectangleToScreen(drawPanel.ClientRectangle);
+            bitMapGraphics.CopyFromScreen(rect.Location, Point.Empty, drawPanel.Size);
+
             if (currentFile == "" || ((ToolStripMenuItem)(sender)).Text == "Save As")
-            {
+            { 
                 dialog.ShowDialog();
-                int width = Convert.ToInt32(drawPanel.Width);
-                int height = Convert.ToInt32(drawPanel.Height);
-                Bitmap bmp = new Bitmap(width, height);
-                drawPanel.DrawToBitmap(bmp, new Rectangle(0, 0, width, height));
                 if (dialog.FileName != "")
                 {
                     bmp.Save(dialog.FileName, ImageFormat.Png);
@@ -222,10 +251,6 @@ namespace Assignment4
             }
             else
             {
-                int width = Convert.ToInt32(drawPanel.Width);
-                int height = Convert.ToInt32(drawPanel.Height);
-                Bitmap bmp = new Bitmap(width, height);
-                drawPanel.DrawToBitmap(bmp, new Rectangle(0, 0, width, height));
                 bmp.Save(currentFile, ImageFormat.Png);
             }
         }
@@ -237,7 +262,7 @@ namespace Assignment4
             {
                  Form f2 = new Form2(this);
                  f2.Show();
-                somethingDrawn = false;
+                 somethingDrawn = false;
             }
 
             else
