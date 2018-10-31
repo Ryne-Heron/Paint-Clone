@@ -1,4 +1,15 @@
-﻿using System;
+﻿/***************************************************
+* 
+*   Programmers: Salman Mohammed, Ryne Heron
+* 
+*        Course: CSCI 473
+*       
+*    Assignment: 4
+*          Date: November 1, 2018
+* 
+**************************************************/
+
+using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
@@ -38,6 +49,7 @@ namespace Assignment4
         public Form1()
         {
             InitializeComponent();
+            this.Text = "Paint Clone";
             bmp = new Bitmap(drawPanel.ClientSize.Width, drawPanel.ClientSize.Height);
             g = drawPanel.CreateGraphics();
             Chosen_Color_Display.BackColor = chosenColor;
@@ -65,6 +77,14 @@ namespace Assignment4
             set { drawPanel = value; }
         }
 
+
+        /***************************************************
+         * 
+         *  Form1_Load()
+         * 
+         *  Purpose: Initializes some components and variables
+         * 
+        **************************************************/
         private void Form1_Load(object sender, EventArgs e)
         {
             List<string> pencilList = new List<string>() { "size 1", "size 2", "size 3" };
@@ -109,6 +129,17 @@ namespace Assignment4
             Chosen_Color_Display.GotFocus += Color_GotFocus;
         }
 
+        /***************************************************
+        * 
+        *   drawPanel_MouseMove()
+        * 
+        *   Purpose: An mouse movment event handler for drawPanel.
+        *       A pen is used to draw lines between every
+        *       point the mouse moves over in order to
+        *       implement free drawing. The pen can be
+        *       set to any color or it can be an "eraser"
+        * 
+        **************************************************/
         private void drawPanel_MouseMove(object sender, MouseEventArgs e)
         {
             if (drawLineSet == false)
@@ -135,28 +166,49 @@ namespace Assignment4
             }
         }
 
+        /***************************************************
+        * 
+        *   drawPanel_MouseDown()
+        * 
+        *   Purpose: A mousedown event handler for drawPanel.
+        *       It sets the points for the spot where the mouse
+        *       is initially click down. Marks the beginning
+        *       of drawing of some sort. If 'Draw Line' is not
+        *       selected, a dot will be drawn at this point
+        * 
+        **************************************************/
         private void drawPanel_MouseDown(object sender, MouseEventArgs e)
         {
             startDraw = true;
             initX = e.X;
             initY = e.Y;
+
+            if (drawLineSet == false)
+            {
+                Pen p = new Pen(chosenColor, width);
+                p.SetLineCap(System.Drawing.Drawing2D.LineCap.Round, System.Drawing.Drawing2D.LineCap.Round, System.Drawing.Drawing2D.DashCap.Round);
+                g.DrawLine(p, new Point(e.X, e.Y), new Point(e.X + 1, e.Y + 1));
+            }
         }
 
+        /***************************************************
+        * 
+        *   drawPanel_MouseUp()
+        * 
+        *   Purpose: A mouseup event handler for drawPanel.
+        *       It sets the points for the spot where the mouse
+        *       is released. This is the end of some kind
+        *       of drawing. 
+        * 
+        **************************************************/
         private void drawPanel_MouseUp(object sender, MouseEventArgs e)
         {
-
             startDraw = false;
             //initX = null;
-            // initY = null;
+            //initY = null;
             finalX = e.X;
             finalY = e.Y;
-            //undoStack.Push();
             somethingDrawn = true;
-            Bitmap temp = new Bitmap(drawPanel.ClientSize.Width, drawPanel.ClientSize.Height);
-            Graphics f = Graphics.FromImage(temp);
-           // drawPanel.Image = temp;
-            Bitmap temp2 = new Bitmap(drawPanel.Image);
-            undoStack.Push(temp2);
 
             if (drawLineSet == true)
             {
@@ -166,16 +218,30 @@ namespace Assignment4
             }
         }
 
+        /***************************************************
+        * 
+        *   undoButton_Click()
+        * 
+        *   Purpose:
+        * 
+        **************************************************/
         private void undoButton_Click(object sender, EventArgs e)
         {
             if(undoStack.Count > 0)
             {
                 Bitmap tempBmp = undoStack.Pop();
-                g.DrawImage(tempBmp, 0, 0, drawPanel.ClientSize.Width, drawPanel.ClientSize.Height);
+                g.DrawImage(tempBmp, 0, 0, drawPanel.Width, drawPanel.Height);
                 redoStack.Push(tempBmp);
             }
         }
 
+        /***************************************************
+        * 
+        *   redoButton_Click()
+        * 
+        *   Purpose:
+        * 
+        **************************************************/
         private void redoButton_Click(object sender, EventArgs e)
         {
             if(redoStack.Count > 0)
@@ -187,11 +253,14 @@ namespace Assignment4
             }
         }
 
-        private void drawPanel_Resize(object sender, EventArgs e)
-        {
-            drawPanel.Invalidate();
-        }
-
+        /***************************************************
+        * 
+        *   colorDialogButton_Click()
+        * 
+        *   Purpose: Opens the color dialog. If a color
+        *       is selected, it will be used when drawing
+        * 
+        **************************************************/
         private void colorDialogButton_Click(object sender, EventArgs e)
         {
             ColorDialog MyDialog = new ColorDialog();
@@ -203,6 +272,13 @@ namespace Assignment4
             Chosen_Color_Display.BackColor = chosenColor;
         }
 
+        /***************************************************
+        * 
+        *   PencilButton_Click()
+        * 
+        *   Purpose: Selects the pencil for drawing
+        * 
+        **************************************************/
         private void pencilButton_Click(object sender, EventArgs e)
         {
             width = lastPencilWidth;
@@ -211,6 +287,13 @@ namespace Assignment4
             
         }
 
+        /***************************************************
+        * 
+        *   brushButton_Click()
+        * 
+        *   Purpose: Selects the brush for drawing
+        * 
+        **************************************************/
         private void brushButton_Click(object sender, EventArgs e)
         {
             width = lastBrushWidth;
@@ -218,6 +301,14 @@ namespace Assignment4
             eraserSet = false;
         }
 
+        /***************************************************
+        * 
+        *   pencilComboBox_SelectedIndexChanged()
+        * 
+        *   Purpose: Selects the width for drawing with
+        *       the pencil
+        * 
+        **************************************************/
         private void pencilComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             if ((string)pencilComboBox.SelectedItem == "size 1")
@@ -240,7 +331,15 @@ namespace Assignment4
 
         }
 
-        private void penComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        /***************************************************
+        * 
+        *   brushComboBox_SelectedIndexChanged()
+        * 
+        *   Purpose: Selects the width for drawing with
+        *       the brush
+        * 
+        **************************************************/
+        private void brushComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             if ((string)penComboBox.SelectedItem == "size 5")
             {
@@ -268,6 +367,14 @@ namespace Assignment4
 
         }
 
+        /***************************************************
+        * 
+        *   colorSelect_Click()
+        * 
+        *   Purpose: The eventhandler used to select one
+        *       of the 28 colorboxes
+        * 
+        **************************************************/
         private void colorSelect_Click(object sender, EventArgs e)
         {
             if (sender as TextBox != null)
@@ -277,6 +384,15 @@ namespace Assignment4
             }
         }
 
+        /***************************************************
+        * 
+        *   saveImage_Click()
+        * 
+        *   Purpose: Will check if the user has saved this
+        *       file already. If not, it will prompt the user
+        *       to name and save the file at a location
+        * 
+        **************************************************/
         private void saveImage_Click(object sender, EventArgs e)
         {
             SaveFileDialog dialog = new SaveFileDialog();
@@ -302,7 +418,17 @@ namespace Assignment4
             }
         }
 
-        private void newImage_Click(object sender, EventArgs e) //make sure to check if there is anything drawn, prompt the user to save
+        /***************************************************
+        * 
+        *   newImage_Click()
+        * 
+        *   Purpose: First checks if anything has been drawn
+        *       on drawPanel. If there has been, it prompts
+        *       the user whether they want to save or not. Otherwise,
+        *       it will clear drawPanel
+        * 
+        **************************************************/
+        private void newImage_Click(object sender, EventArgs e)
         {
             Bitmap bmp2 = null;
             if (somethingDrawn == true)
@@ -319,10 +445,17 @@ namespace Assignment4
             }
         }
 
-
+        //necessary to get rid of blinking text cursor in textboxes
         [DllImport("user32.dll")]
         static extern bool HideCaret(IntPtr hWnd);
 
+        /***************************************************
+        * 
+        *   Color_GotFocus()
+        * 
+        *   Purpose: Removes the text cursor from a component
+        * 
+        **************************************************/
         private void Color_GotFocus(object sender, EventArgs e)
         {
             if (sender as TextBox != null)
@@ -331,6 +464,14 @@ namespace Assignment4
             }
         }
 
+        /***************************************************
+        * 
+        *   openToolStripMenuItem_Click()
+        * 
+        *   Purpose: Opens up a dialog that allows the user
+        *       to select a file to open in drawPanel.
+        * 
+        **************************************************/
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
             try
@@ -350,55 +491,40 @@ namespace Assignment4
 
         }
 
-        private void saveToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            //just a bunch of dumb ideas i had to try fixing save 
-            /*Bitmap bm2 = null;
-
-            SaveFileDialog dialog = new SaveFileDialog();
-            dialog.AddExtension = true;
-            dialog.Filter = "Png (*.png)|*.png";
-            if (currentFile == "" || ((ToolStripMenuItem)(sender)).Text == "Save As")
-            {
-                dialog.ShowDialog();
-                using (var bm = new Bitmap(drawPanel.Width, drawPanel.Height))
-                {
-                    drawPanel.DrawToBitmap(bm, new Rectangle(0, 0, bm.Width, bm.Height));
-                    bm2 = new Bitmap(bm);
-                    bm.Dispose();
-                }
-                if (dialog.FileName != "")
-                {
-                    bm2.Save(dialog.FileName, ImageFormat.Png);
-                    currentFile = dialog.FileName;
-                    bm2.Dispose();
-                } */
-
-            // SaveFileDialog dialog = new SaveFileDialog();
-
-            // Bitmap bmp = new Bitmap(drawPanel.ClientRectangle.Width, drawPanel.ClientRectangle.Height);
-            //drawPanel.DrawToBitmap(bmp, new Rectangle(0, 0, bmp.Width, bmp.Height));
-            // bmp.Save(dialog.FileName);
-            //  string FilePath = Application.StartupPath;
-            // drawPanel.Image.Save(FilePath, ImageFormat.Png);
-            //Image image = drawPanel.Image;
-           // image.Save(@"C:\Documents and Settings\100000test.jpg", ImageFormat.Jpeg);
-        }
-
+        /***************************************************
+        * 
+        *   drawLineButton_Click()
+        * 
+        *   Purpose: Selects the 'Draw Line' tool for drawing
+        * 
+        **************************************************/
         private void drawLineButton_Click(object sender, EventArgs e)
         {
-           // Pen p = new Pen(chosenColor, width);
-           // g.DrawLine(p, (float)initX, (float)initY, (float)finalX, (float)finalY);
             drawLineSet = true;
 
         }
 
+        /***************************************************
+        * 
+        *   eraserButton_Click()
+        * 
+        *   Purpose: Selects the 'Eraser' tool for erasing
+        * 
+        **************************************************/
         private void eraserButton_Click(object sender, EventArgs e)
         {
             eraserSet = true;
             width = 3;
         }
 
+        /***************************************************
+        * 
+        *   eraserComboBox_SelectedIndexChanged()
+        * 
+        *   Purpose: Selects the width for erasing with the
+        *       eraser
+        * 
+        **************************************************/
         private void eraserComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             if ((string)eraserComboBox.SelectedItem == "size 1")
@@ -420,6 +546,6 @@ namespace Assignment4
             }
         }
     }
-    }
+}
 
 
