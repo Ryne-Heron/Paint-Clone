@@ -26,7 +26,7 @@ namespace Assignment4
 {
     public partial class Form1 : Form
     {
-        Graphics g;
+        Graphics g, g1;
         bool startDraw = false;
         bool somethingDrawn = false;
         int? initX = null;
@@ -52,18 +52,13 @@ namespace Assignment4
             this.Text = "Paint Clone";
             bmp = new Bitmap(drawPanel.ClientSize.Width, drawPanel.ClientSize.Height);
             g = drawPanel.CreateGraphics();
+            g1 = Graphics.FromImage(bmp);
             Chosen_Color_Display.BackColor = chosenColor;
             bkg = drawPanel.BackColor;
 
-            Bitmap temp = new Bitmap(drawPanel.ClientSize.Width, drawPanel.ClientSize.Height);
-            Graphics f = Graphics.FromImage(temp);
-            drawPanel.Image = temp;
-            Bitmap temp2 = new Bitmap(drawPanel.Image);
-            //undoStack.Push(temp);
-
             undoStack = new Stack<Bitmap>();
             redoStack = new Stack<Bitmap>();
-            undoStack.Push(temp2);
+            undoStack.Push(new Bitmap(bmp));
         }
 
         public string CurrentFile
@@ -151,6 +146,7 @@ namespace Assignment4
                         Pen p = new Pen(bkg, width);
                         p.SetLineCap(System.Drawing.Drawing2D.LineCap.Round, System.Drawing.Drawing2D.LineCap.Round, System.Drawing.Drawing2D.DashCap.Round);
                         g.DrawLine(p, new Point(initX ?? e.X, initY ?? e.Y), new Point(e.X, e.Y));
+                        g1.DrawLine(p, new Point(initX ?? e.X, initY ?? e.Y), new Point(e.X, e.Y));
                         initX = e.X;
                         initY = e.Y;
                     }
@@ -159,6 +155,7 @@ namespace Assignment4
                         Pen p = new Pen(chosenColor, width);
                         p.SetLineCap(System.Drawing.Drawing2D.LineCap.Round, System.Drawing.Drawing2D.LineCap.Round, System.Drawing.Drawing2D.DashCap.Round);
                         g.DrawLine(p, new Point(initX ?? e.X, initY ?? e.Y), new Point(e.X, e.Y));
+                        g1.DrawLine(p, new Point(initX ?? e.X, initY ?? e.Y), new Point(e.X, e.Y));
                         initX = e.X;
                         initY = e.Y;
                     }
@@ -188,6 +185,8 @@ namespace Assignment4
                 Pen p = new Pen(chosenColor, width);
                 p.SetLineCap(System.Drawing.Drawing2D.LineCap.Round, System.Drawing.Drawing2D.LineCap.Round, System.Drawing.Drawing2D.DashCap.Round);
                 g.DrawLine(p, new Point(e.X, e.Y), new Point(e.X + 1, e.Y + 1));
+                g1.DrawLine(p, new Point(e.X, e.Y), new Point(e.X + 1, e.Y + 1));
+
             }
         }
 
@@ -209,13 +208,22 @@ namespace Assignment4
             finalX = e.X;
             finalY = e.Y;
             somethingDrawn = true;
+            if (((PictureBox)sender) != null) 
+            {
+                    undoStack.Push(new Bitmap(bmp));
+            }
+            
 
             if (drawLineSet == true)
             {
                 Pen p = new Pen(chosenColor, width);
                 p.SetLineCap(System.Drawing.Drawing2D.LineCap.Round, System.Drawing.Drawing2D.LineCap.Round, System.Drawing.Drawing2D.DashCap.Round);
                 g.DrawLine(p, (float)initX, (float)initY, (float)finalX, (float)finalY);
+                g1.DrawLine(p, (float)initX, (float)initY, (float)finalX, (float)finalY);
+
             }
+
+            bmp.Save("mostRecent.png");
         }
 
         /***************************************************
@@ -227,10 +235,19 @@ namespace Assignment4
         **************************************************/
         private void undoButton_Click(object sender, EventArgs e)
         {
-            if(undoStack.Count > 0)
+            if(undoStack.Count >= 1)
             {
+                // undoStack.Pop();
+                Console.WriteLine(undoStack.Count);
                 Bitmap tempBmp = undoStack.Pop();
-                g.DrawImage(tempBmp, 0, 0, drawPanel.Width, drawPanel.Height);
+               // g.DrawImage(tempBmp, 0, 0, drawPanel.Width, drawPanel.Height);
+               // g1.DrawImage(tempBmp, 0, 0, drawPanel.Width, drawPanel.Height);
+                drawPanel.Image = tempBmp;
+                drawPanel.Update();
+                //drawPanel.Refresh();
+                Console.WriteLine(undoStack.Count);
+                bmp = tempBmp;
+
                 redoStack.Push(tempBmp);
             }
         }
@@ -247,9 +264,16 @@ namespace Assignment4
             if(redoStack.Count > 0)
             {
                 Bitmap tempBmp = redoStack.Pop();
-                g.DrawImage(tempBmp, 0, 0, drawPanel.ClientSize.Width, drawPanel.ClientSize.Height);
+               // g.DrawImage(tempBmp, 0, 0, drawPanel.ClientSize.Width, drawPanel.ClientSize.Height);
+               // g1.DrawImage(tempBmp, 0, 0, drawPanel.ClientSize.Width, drawPanel.ClientSize.Height);
+                drawPanel.Image = tempBmp;
+                drawPanel.Update();
+                //drawPanel.Refresh();
+                Console.WriteLine("stack has something");
+                bmp = tempBmp;
+
                 undoStack.Push(tempBmp);
-                drawPanel.Refresh();
+             //   drawPanel.Refresh();
             }
         }
 
@@ -516,6 +540,49 @@ namespace Assignment4
             eraserSet = true;
             width = 3;
         }
+
+        private void Form1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Control && e.KeyCode == Keys.Z)
+            {
+
+                if (undoStack.Count >= 1)
+                {
+                    // undoStack.Pop();
+                    Console.WriteLine(undoStack.Count);
+                    Bitmap tempBmp = undoStack.Pop();
+                    // g.DrawImage(tempBmp, 0, 0, drawPanel.Width, drawPanel.Height);
+                    // g1.DrawImage(tempBmp, 0, 0, drawPanel.Width, drawPanel.Height);
+                    drawPanel.Image = tempBmp;
+                    drawPanel.Update();
+                    //drawPanel.Refresh();
+                    Console.WriteLine(undoStack.Count);
+                    bmp = tempBmp;
+
+                    redoStack.Push(tempBmp);
+                }
+            }
+
+                if (e.Control && e.KeyCode == Keys.X)
+                {
+                    
+                    if (redoStack.Count > 0)
+                    {
+                        Bitmap tempBmp = redoStack.Pop();
+                        // g.DrawImage(tempBmp, 0, 0, drawPanel.ClientSize.Width, drawPanel.ClientSize.Height);
+                        // g1.DrawImage(tempBmp, 0, 0, drawPanel.ClientSize.Width, drawPanel.ClientSize.Height);
+                        drawPanel.Image = tempBmp;
+                        drawPanel.Update();
+                        //drawPanel.Refresh();
+                        Console.WriteLine("stack has something");
+                        bmp = tempBmp;
+
+                        undoStack.Push(tempBmp);
+                        //   drawPanel.Refresh();
+                    }
+                }
+            }
+        
 
         /***************************************************
         * 
