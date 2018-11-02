@@ -208,9 +208,9 @@ namespace Assignment4
             finalX = e.X;
             finalY = e.Y;
             somethingDrawn = true;
-            if (((PictureBox)sender) != null) 
+            if (((PictureBox)sender) != null && redoStack.Count >= 0) 
             {
-                    undoStack.Push(new Bitmap(bmp));
+                undoStack.Push(new Bitmap(bmp));
             }
             
 
@@ -238,15 +238,15 @@ namespace Assignment4
             if(undoStack.Count >= 1)
             {
                 // undoStack.Pop();
-                Console.WriteLine(undoStack.Count);
                 Bitmap tempBmp = undoStack.Pop();
                // g.DrawImage(tempBmp, 0, 0, drawPanel.Width, drawPanel.Height);
                // g1.DrawImage(tempBmp, 0, 0, drawPanel.Width, drawPanel.Height);
                 drawPanel.Image = tempBmp;
+                //bmp = tempBmp;
+
                 drawPanel.Update();
                 //drawPanel.Refresh();
-                Console.WriteLine(undoStack.Count);
-                bmp = tempBmp;
+                //Console.WriteLine(undoStack.Count);
 
                 redoStack.Push(tempBmp);
             }
@@ -267,10 +267,11 @@ namespace Assignment4
                // g.DrawImage(tempBmp, 0, 0, drawPanel.ClientSize.Width, drawPanel.ClientSize.Height);
                // g1.DrawImage(tempBmp, 0, 0, drawPanel.ClientSize.Width, drawPanel.ClientSize.Height);
                 drawPanel.Image = tempBmp;
+                bmp = tempBmp;
+
                 drawPanel.Update();
                 //drawPanel.Refresh();
                 Console.WriteLine("stack has something");
-                bmp = tempBmp;
 
                 undoStack.Push(tempBmp);
              //   drawPanel.Refresh();
@@ -541,23 +542,33 @@ namespace Assignment4
             width = 3;
         }
 
+
+        /***************************************************
+        * 
+        *   Form1_KeyDown()
+        * 
+        *   Purpose: Handles key events for the entire form.
+        *       Handles events for undo and redo that
+        *       are treated the same as clicking
+        *       the undo/redo buttons
+        * 
+        **************************************************/
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Control && e.KeyCode == Keys.Z)
             {
 
-                if (undoStack.Count >= 1)
+                if (undoStack.Count > 0)
                 {
-                    // undoStack.Pop();
-                    Console.WriteLine(undoStack.Count);
                     Bitmap tempBmp = undoStack.Pop();
                     // g.DrawImage(tempBmp, 0, 0, drawPanel.Width, drawPanel.Height);
                     // g1.DrawImage(tempBmp, 0, 0, drawPanel.Width, drawPanel.Height);
                     drawPanel.Image = tempBmp;
+                    //bmp = tempBmp;
+
                     drawPanel.Update();
                     //drawPanel.Refresh();
-                    Console.WriteLine(undoStack.Count);
-                    bmp = tempBmp;
+                    Console.WriteLine("Undo Stack " + undoStack.Count);
 
                     redoStack.Push(tempBmp);
                 }
@@ -572,10 +583,11 @@ namespace Assignment4
                         // g.DrawImage(tempBmp, 0, 0, drawPanel.ClientSize.Width, drawPanel.ClientSize.Height);
                         // g1.DrawImage(tempBmp, 0, 0, drawPanel.ClientSize.Width, drawPanel.ClientSize.Height);
                         drawPanel.Image = tempBmp;
+                        //bmp = tempBmp;
+
                         drawPanel.Update();
                         //drawPanel.Refresh();
-                        Console.WriteLine("stack has something");
-                        bmp = tempBmp;
+                        Console.WriteLine("Redo Stack: " + redoStack.Count);
 
                         undoStack.Push(tempBmp);
                         //   drawPanel.Refresh();
