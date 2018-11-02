@@ -20,11 +20,11 @@ namespace Assignment4
             InitializeComponent();
         }
 
-        public Form2(Form1 form)
+        public Form2(Form1 form)    //takes form 1 in the constructor 
         {
             InitializeComponent();
             this.CallingForm = form;
-            this.StartPosition = FormStartPosition.CenterScreen;
+            this.StartPosition = FormStartPosition.CenterScreen;    //center it 
         }
 
 
@@ -37,7 +37,7 @@ namespace Assignment4
         }
         public Form Draw { get; set; }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void button1_Click(object sender, EventArgs e)  //basically just the logic for save 
         {
             SaveFileDialog dialog = new SaveFileDialog();
             dialog.AddExtension = true;
@@ -69,13 +69,13 @@ namespace Assignment4
 
         private void button3_Click(object sender, EventArgs e)
         {
-            this.CallingForm.DrawPanel.Refresh();
+            this.CallingForm.DrawPanel.Refresh();   //dont save 
             this.Close();
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            this.Close();
+            this.Close();   //close 
         }
     }
 }

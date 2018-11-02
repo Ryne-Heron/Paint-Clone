@@ -29,7 +29,7 @@ namespace Assignment4
         Graphics g, g1;
         bool startDraw = false;
         bool somethingDrawn = false;
-        int? initX = null;
+        int? initX = null;  //coordinates for drawing
         int? initY = null;
         int finalX = 0;
         int finalY = 0;
@@ -56,15 +56,15 @@ namespace Assignment4
             Chosen_Color_Display.BackColor = chosenColor;
             bkg = drawPanel.BackColor;
 
-            undoStack = new Stack<Bitmap>();
+            undoStack = new Stack<Bitmap>();        //stacks for undo and redo
             redoStack = new Stack<Bitmap>();
-            undoStack.Push(new Bitmap(bmp));
+            undoStack.Push(new Bitmap(bmp));    //pushing blank screen for undo stack
         }
 
         public string CurrentFile
         {
             get => currentFile;
-            set { currentFile = value; }
+            set { currentFile = value; }        //getters needed for form 2
         }
         public PictureBox DrawPanel
         {
@@ -83,7 +83,7 @@ namespace Assignment4
         private void Form1_Load(object sender, EventArgs e)
         {
             List<string> pencilList = new List<string>() { "size 1", "size 2", "size 3" };
-            List<string> penList = new List<string>() { "size 5", "size 6", "size 7", "size 8" };
+            List<string> penList = new List<string>() { "size 5", "size 6", "size 7", "size 8" };   //combo box options
             List<string> eraserList = new List<string>() { "size 1", "size 2", "size 3" };
             pencilComboBox.DataSource = pencilList;
             penComboBox.DataSource = penList;
@@ -146,7 +146,7 @@ namespace Assignment4
                         Pen p = new Pen(bkg, width);
                         p.SetLineCap(System.Drawing.Drawing2D.LineCap.Round, System.Drawing.Drawing2D.LineCap.Round, System.Drawing.Drawing2D.DashCap.Round);
                         g.DrawLine(p, new Point(initX ?? e.X, initY ?? e.Y), new Point(e.X, e.Y));
-                        g1.DrawLine(p, new Point(initX ?? e.X, initY ?? e.Y), new Point(e.X, e.Y));
+                        g1.DrawLine(p, new Point(initX ?? e.X, initY ?? e.Y), new Point(e.X, e.Y)); //actual drawing of the lines here
                         initX = e.X;
                         initY = e.Y;
                     }
@@ -208,11 +208,11 @@ namespace Assignment4
             somethingDrawn = true;
             if (((PictureBox)sender) != null) 
             {
-                undoStack.Push(new Bitmap(bmp));
+                undoStack.Push(new Bitmap(bmp));    //pushing last state onto the undo stack 
             }
             
 
-            if (drawLineSet == true)
+            if (drawLineSet == true)    //line mode on 
             {
                 Pen p = new Pen(chosenColor, width);
                 p.SetLineCap(System.Drawing.Drawing2D.LineCap.Round, System.Drawing.Drawing2D.LineCap.Round, System.Drawing.Drawing2D.DashCap.Round);
@@ -238,10 +238,10 @@ namespace Assignment4
             {
                 Bitmap tempBmp = undoStack.Pop();
 
-                drawPanel.Image = tempBmp;
+                drawPanel.Image = tempBmp;  // set image to the popped version of last bitmap state 
 
                 drawPanel.Update();
-                Console.WriteLine("Undo Stack " + undoStack.Count);
+                
 
                 redoStack.Push(tempBmp);
             }
@@ -302,7 +302,7 @@ namespace Assignment4
         private void pencilButton_Click(object sender, EventArgs e)
         {
             width = lastPencilWidth;
-            drawLineSet = false;
+            drawLineSet = false;        //make sure eraser and drawline mode are off 
             eraserSet = false;
             
         }
@@ -417,13 +417,13 @@ namespace Assignment4
         {
             SaveFileDialog dialog = new SaveFileDialog();
             dialog.AddExtension = true;
-            dialog.Filter = "Png (*.png)|*.png";
+            dialog.Filter = "Png (*.png)|*.png";    //only png 
             
             var bitMapGraphics = Graphics.FromImage(bmp);
             var rect = drawPanel.RectangleToScreen(drawPanel.ClientRectangle);
             bitMapGraphics.CopyFromScreen(rect.Location, Point.Empty, drawPanel.Size);
             
-            if (currentFile == "" || ((ToolStripMenuItem)(sender)).Text == "Save As")
+            if (currentFile == "" || ((ToolStripMenuItem)(sender)).Text == "Save As")   //logic for save as 
             { 
                 dialog.ShowDialog();
                 if (dialog.FileName != "")
@@ -434,7 +434,7 @@ namespace Assignment4
             }
             else
             {
-                bmp.Save(currentFile, ImageFormat.Png);
+                bmp.Save(currentFile, ImageFormat.Png); //just for save 
             }
         }
 
@@ -450,11 +450,11 @@ namespace Assignment4
         **************************************************/
         private void newImage_Click(object sender, EventArgs e)
         {
-            Bitmap bmp2 = null;
+            
             if (somethingDrawn == true)
             {
                  Form f2 = new Form2(this);
-                 f2.Show();
+                 f2.Show(); //pop up of form 2
                  somethingDrawn = false;
             }
 
@@ -550,7 +550,7 @@ namespace Assignment4
         **************************************************/
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Control && e.KeyCode == Keys.Z)
+            if (e.Control && e.KeyCode == Keys.Z)   //if cntrl Z
             {
 
                 if (undoStack.Count > 0)
@@ -566,7 +566,7 @@ namespace Assignment4
                 }
             }
 
-                if (e.Control && e.KeyCode == Keys.X)
+                if (e.Control && e.KeyCode == Keys.X)   //if cntrl X
                 {
                     
                     if (redoStack.Count > 0)
