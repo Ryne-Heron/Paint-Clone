@@ -203,12 +203,10 @@ namespace Assignment4
         private void drawPanel_MouseUp(object sender, MouseEventArgs e)
         {
             startDraw = false;
-            //initX = null;
-            //initY = null;
             finalX = e.X;
             finalY = e.Y;
             somethingDrawn = true;
-            if (((PictureBox)sender) != null && redoStack.Count >= 0) 
+            if (((PictureBox)sender) != null) 
             {
                 undoStack.Push(new Bitmap(bmp));
             }
@@ -222,31 +220,28 @@ namespace Assignment4
                 g1.DrawLine(p, (float)initX, (float)initY, (float)finalX, (float)finalY);
 
             }
-
-            bmp.Save("mostRecent.png");
         }
 
         /***************************************************
         * 
         *   undoButton_Click()
         * 
-        *   Purpose:
+        *   Purpose: Should undo the last drawing action
+        *       made to the drawPanel. Uses the undoStack
+        *       to store the previous versions of the image.
+        *       Pushes images popped from undoStack onto redoStack
         * 
         **************************************************/
         private void undoButton_Click(object sender, EventArgs e)
         {
-            if(undoStack.Count >= 1)
+            if (undoStack.Count > 0)
             {
-                // undoStack.Pop();
                 Bitmap tempBmp = undoStack.Pop();
-               // g.DrawImage(tempBmp, 0, 0, drawPanel.Width, drawPanel.Height);
-               // g1.DrawImage(tempBmp, 0, 0, drawPanel.Width, drawPanel.Height);
+
                 drawPanel.Image = tempBmp;
-                //bmp = tempBmp;
 
                 drawPanel.Update();
-                //drawPanel.Refresh();
-                //Console.WriteLine(undoStack.Count);
+                Console.WriteLine("Undo Stack " + undoStack.Count);
 
                 redoStack.Push(tempBmp);
             }
@@ -256,25 +251,25 @@ namespace Assignment4
         * 
         *   redoButton_Click()
         * 
-        *   Purpose:
+        *   Purpose: Should redo the last drawing action
+        *       reversed by undo. Uses the redoStack
+        *       to store the previous versions of the image.
+        *       Pushes images popped from redoStack onto undoStack
         * 
         **************************************************/
         private void redoButton_Click(object sender, EventArgs e)
         {
-            if(redoStack.Count > 0)
+            if (redoStack.Count > 0)
             {
                 Bitmap tempBmp = redoStack.Pop();
-               // g.DrawImage(tempBmp, 0, 0, drawPanel.ClientSize.Width, drawPanel.ClientSize.Height);
-               // g1.DrawImage(tempBmp, 0, 0, drawPanel.ClientSize.Width, drawPanel.ClientSize.Height);
+
                 drawPanel.Image = tempBmp;
-                bmp = tempBmp;
+
 
                 drawPanel.Update();
-                //drawPanel.Refresh();
-                Console.WriteLine("stack has something");
+                Console.WriteLine("Redo Stack: " + redoStack.Count);
 
                 undoStack.Push(tempBmp);
-             //   drawPanel.Refresh();
             }
         }
 
@@ -423,11 +418,11 @@ namespace Assignment4
             SaveFileDialog dialog = new SaveFileDialog();
             dialog.AddExtension = true;
             dialog.Filter = "Png (*.png)|*.png";
-
+            
             var bitMapGraphics = Graphics.FromImage(bmp);
             var rect = drawPanel.RectangleToScreen(drawPanel.ClientRectangle);
             bitMapGraphics.CopyFromScreen(rect.Location, Point.Empty, drawPanel.Size);
-
+            
             if (currentFile == "" || ((ToolStripMenuItem)(sender)).Text == "Save As")
             { 
                 dialog.ShowDialog();
@@ -561,13 +556,10 @@ namespace Assignment4
                 if (undoStack.Count > 0)
                 {
                     Bitmap tempBmp = undoStack.Pop();
-                    // g.DrawImage(tempBmp, 0, 0, drawPanel.Width, drawPanel.Height);
-                    // g1.DrawImage(tempBmp, 0, 0, drawPanel.Width, drawPanel.Height);
+
                     drawPanel.Image = tempBmp;
-                    //bmp = tempBmp;
 
                     drawPanel.Update();
-                    //drawPanel.Refresh();
                     Console.WriteLine("Undo Stack " + undoStack.Count);
 
                     redoStack.Push(tempBmp);
@@ -580,17 +572,14 @@ namespace Assignment4
                     if (redoStack.Count > 0)
                     {
                         Bitmap tempBmp = redoStack.Pop();
-                        // g.DrawImage(tempBmp, 0, 0, drawPanel.ClientSize.Width, drawPanel.ClientSize.Height);
-                        // g1.DrawImage(tempBmp, 0, 0, drawPanel.ClientSize.Width, drawPanel.ClientSize.Height);
+
                         drawPanel.Image = tempBmp;
-                        //bmp = tempBmp;
+
 
                         drawPanel.Update();
-                        //drawPanel.Refresh();
                         Console.WriteLine("Redo Stack: " + redoStack.Count);
 
                         undoStack.Push(tempBmp);
-                        //   drawPanel.Refresh();
                     }
                 }
             }
